@@ -1,39 +1,37 @@
 #include <iostream>
 #include <string>
-#include <mysql/mysql.h>
+#include <sqlite3.h>
 
 
 using namespace std;
 
 //Database connection function (Claude generated)
-MYSQL* connectDB() {
-    MYSQL* conn = mysql_init(NULL);
+sqlite3* connectDB() {
+    sqlite3* db;
+    int rc = sqlite3_open("forum.db", &db);
     
-    if (conn == NULL) {
-        cerr << "mysql_init() failed" << endl;
-        return NULL;
+    if (rc != SQLITE_OK) {
+        cerr << "Cannot open database: " << sqlite3_errmsg(db) << endl;
+        return nullptr;
     }
     
-    // Connect to database
-    if (mysql_real_connect(conn, "localhost", "root", "", "forum_db", 0, NULL, 0) == NULL) {
-        cerr << "mysql_real_connect() failed: " << mysql_error(conn) << endl;
-        mysql_close(conn);
-        return NULL;
-    }
-    
-    return conn;
+    return db;
 }
+
 
 //obtains the upvote count from SQL thingy
 int getUpvoteCount(string post_id) {
+    return 1;
 }
 
 //obtains the downvote count from SQL thingy
 int getDownvoteCount(string post_id) {
+    return 1;
 }
 
 //obtains the comment count from SQL thingy
 int getCommentCount(string post_id) {
+    return 1;
 }
 
 //handles the upvoting functionality that counts the score up when clicked
@@ -64,12 +62,12 @@ int main (int argc, char* argv[]) {
         handleUpvote(argv[2], argv[3]);
         }
 
-    if (action == "downvote") {
+    else if (action == "downvote") {
         handleDownvote(argv[2], argv[3]);
     }
 
-    if (action == "comment") {
-        handleComment(argc[2], argv[3], argv[4]);
+    else if (action == "comment") {
+        handleComment(argv[2], argv[3], argv[4]);
     }
 
     else { //error handling, perhaps the strings dont match with the ones in php from Hao
