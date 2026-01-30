@@ -18,7 +18,6 @@ sqlite3* connectDB() {
     return db;
 }
 
-
 //obtains the upvote count from SQL thingy
 int getUpvoteCount(string post_id) {
     return 1;
@@ -35,12 +34,14 @@ int getCommentCount(string post_id) {
 }
 
 //handles the upvoting functionality that counts the score up when clicked
-void handleUpvote(string post_id, string user_id) {
-    int upvoteCount = getUpvoteCount(post_id);
+int handleUpvote(string post_id, string user_id) {
+    int upvoteCount = getUpvoteCount(post_id);    
+    upvoteCount++;
 }
 
 //handles the downvoting functionality that counts the score down when clicked
-void handleDownvote(string post_id, string user_id) {
+int handleDownvote(string post_id, string user_id) {
+    return 1;
 }
 
 //handles the comment count and its functionality I think
