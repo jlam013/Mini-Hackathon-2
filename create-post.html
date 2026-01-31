@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create a Post | MRU CS Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <h1>MRU CS Hub</h1>
+        <p class="subtitle">
+            Share notes, exams, and examples with fellow MRU CS students
+        </p>
+    </div>
+    <nav>
+        <a href="#">Login</a>
+        <a href="#" class="btn-outline">Sign Up</a>
+    </nav>
+</header>
+
+<main class="content">
+    <h2>Create a Post</h2>
+
+    <div class="post-card post-form">
+        <input id="postTitle" type="text" placeholder="Post title">
+
+        <input id="postCourse" type="text" placeholder='Course (e.g. COMP2633)'>
+
+        <select id="postType">
+            <option value="notes">Notes</option>
+            <option value="exams">Previous Exams & Assignments</option>
+            <option value="practice">Practice Questions</option>
+        </select>
+
+        <textarea id="postDesc" rows="6" placeholder="Describe the resource"></textarea>
+
+        <button onclick="savePost()">Post</button>
+    </div>
+
+    <script src="create-post.js"></script>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-content">
+        <p><strong>MRU CS Hub</strong> — A student-built project</p>
+        <p>
+            📧 Contact: hye582@mtroyal.ca  
+            | 🐞 <a href="#">Report a bug</a>
+        </p>
+        <p class="footer-note">
+            This platform is not officially affiliated with Mount Royal University.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

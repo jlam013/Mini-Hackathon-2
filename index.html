@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MRU CS Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="main.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <h1>MRU CS Hub</h1>
+        <p class="subtitle">
+            Share notes, exams, and examples with fellow MRU CS students
+        </p>
+    </div>
+    <nav>
+        <a href="#">Login</a>
+        <a href="#" class="btn-outline">Sign Up</a>
+    </nav>
+</header>
+
+<main class="center">
+    <h2>Find course resources</h2>
+
+    <div class="search-row">
+        <input 
+            id="courseInput"
+            type="text"
+            placeholder='Enter course name e.g. "COMP 2633"'>
+        <button onclick="searchCourse()">Search</button>
+    </div>
+
+    <!-- Call to Action Card (Plan A) -->
+    <div class="post-card">
+        <h3>Have something to share?</h3>
+        <p>
+            Upload your notes, exams to help other MRU CS students.
+        </p>
+        <a href="create-post.html" class="btn-primary">
+            Create a Post
+        </a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-content">
+        <p><strong>MRU CS Hub</strong> — A student-built project</p>
+        <p>
+            📧 Contact: hye582@mtroyal.ca  
+            | 🐞 <a href="#">Report a bug</a>
+        </p>
+        <p class="footer-note">
+            This platform is not officially affiliated with Mount Royal University.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
