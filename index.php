@@ -1,7 +1,7 @@
 <?php
+//ai generated
 // index.php - Main forum page
 
-// Connect to database
 try {
     $db = new PDO('sqlite:forum.db');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -18,8 +18,16 @@ $query = $db->query("
 ");
 $posts = $query->fetchAll(PDO::FETCH_ASSOC);
 
-// Current user (hardcoded for now - in real app, use sessions)
+// Current user (hardcoded for now)
 $current_user_id = 1;
+
+// Function to check if user voted on a post
+function getUserVote($db, $user_id, $post_id) {
+    $stmt = $db->prepare("SELECT vote_type FROM votes WHERE user_id = ? AND post_id = ?");
+    $stmt->execute([$user_id, $post_id]);
+    $result = $stmt->fetch();
+    return $result ? $result['vote_type'] : null;
+}
 ?>
 
 <!DOCTYPE html>
@@ -61,6 +69,7 @@ $current_user_id = 1;
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .vote-btn {
             padding: 8px 15px;
@@ -76,6 +85,10 @@ $current_user_id = 1;
         .upvote-btn:hover {
             background-color: #45a049;
         }
+        .upvote-btn.active {
+            background-color: #2d7a30;
+            font-weight: bold;
+        }
         .downvote-btn {
             background-color: #f44336;
             color: white;
@@ -83,14 +96,13 @@ $current_user_id = 1;
         .downvote-btn:hover {
             background-color: #da190b;
         }
+        .downvote-btn.active {
+            background-color: #b71c0c;
+            font-weight: bold;
+        }
         .vote-count {
             font-weight: bold;
             padding: 0 10px;
-        }
-        .comments-link {
-            margin-left: 20px;
-            color: #2196F3;
-            text-decoration: none;
         }
         h1 {
             color: #333;
@@ -101,6 +113,7 @@ $current_user_id = 1;
     <h1>🎓 Student Forum</h1>
     
     <?php foreach ($posts as $post): ?>
+        <?php $user_vote = getUserVote($db, $current_user_id, $post['id']); ?>
         <div class="post">
             <div class="post-title"><?php echo htmlspecialchars($post['title']); ?></div>
             <div class="post-meta">
@@ -117,8 +130,8 @@ $current_user_id = 1;
                     <input type="hidden" name="action" value="upvote">
                     <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
                     <input type="hidden" name="user_id" value="<?php echo $current_user_id; ?>">
-                    <button type="submit" class="vote-btn upvote-btn">
-                        👍 Upvote
+                    <button type="submit" class="vote-btn upvote-btn <?php echo $user_vote === 'upvote' ? 'active' : ''; ?>">
+                        👍 Upvote <?php echo $user_vote === 'upvote' ? '✓' : ''; ?>
                     </button>
                 </form>
                 
@@ -131,18 +144,14 @@ $current_user_id = 1;
                     <input type="hidden" name="action" value="downvote">
                     <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
                     <input type="hidden" name="user_id" value="<?php echo $current_user_id; ?>">
-                    <button type="submit" class="vote-btn downvote-btn">
-                        👎 Downvote
+                    <button type="submit" class="vote-btn downvote-btn <?php echo $user_vote === 'downvote' ? 'active' : ''; ?>">
+                        👎 Downvote <?php echo $user_vote === 'downvote' ? '✓' : ''; ?>
                     </button>
                 </form>
                 
                 <span class="vote-count">
                     <?php echo $post['downvotes']; ?> downvotes
                 </span>
-                
-                <a href="comments.php?post_id=<?php echo $post['id']; ?>" class="comments-link">
-                    💬 Comments
-                </a>
             </div>
         </div>
     <?php endforeach; ?>

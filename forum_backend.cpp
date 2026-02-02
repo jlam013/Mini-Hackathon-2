@@ -2,10 +2,9 @@
 #include <string>
 #include <sqlite3.h>
 
-
 using namespace std;
-
-//database connection function (Claude generated) that returns the database
+//ai generated
+// Database connection function
 sqlite3* connectDB() {
     sqlite3* db;
     int rc = sqlite3_open("forum.db", &db);
@@ -18,183 +17,131 @@ sqlite3* connectDB() {
     return db;
 }
 
-//obtains the upvote count from SQL thingy (claude generated)
-int getUpvoteCount(string post_id) {
+// Get user's current vote on a post (returns "upvote", "downvote", or "" if no vote)
+string getUserVote(string user_id, string post_id) {
     sqlite3* db = connectDB();
-    if (db == nullptr) {
-        return -1;
-    }
-
-    string query = "Select the upvotes from posts where id = " + post_id;
-
-    sqlite3_stmt* stmt;
-
-    int upvotes = 0;
-    if (sqlite3_step(stmt) == SQLITE_ROW)   {
-        upvotes = sqlite3_column_int(stmt, 0);
-    }
-
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
-    return upvotes;
-}
-
-//obtains the downvote count from SQL thingy (claude generated)
-int getDownvoteCount(string post_id) {
-     sqlite3* db = connectDB();
-    if (db == nullptr) return -1;
+    if (db == nullptr) return "";
     
-    string query = "SELECT downvotes FROM posts WHERE id = " + post_id;
-    
-    sqlite3_stmt* stmt;
-    sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
-    
-    int downvotes = 0;
-    if (sqlite3_step(stmt) == SQLITE_ROW) {
-        downvotes = sqlite3_column_int(stmt, 0);
-    }
-    
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
-    
-    return downvotes;
-}
-
-//obtains the comment count from SQL thingy (claude generated)
-int getCommentCount(string post_id) {
-     sqlite3* db = connectDB();
-    if (db == nullptr) return -1;
-    
-    string query = "SELECT COUNT(*) FROM comments WHERE post_id = " + post_id;
-    
-    sqlite3_stmt* stmt;
-    sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
-    
-    int count = 0;
-    if (sqlite3_step(stmt) == SQLITE_ROW) {
-        count = sqlite3_column_int(stmt, 0);
-    }
-    
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
-    
-    return count;
-}
-
-//check if user already voted on a post (claude generated)
-bool hasUserVoted(string user_id, string post_id) {
-    sqlite3* db = connectDB();
-    if (db == nullptr) return false;
-    
-    string query = "SELECT COUNT(*) FROM votes WHERE user_id = " + user_id + 
+    string query = "SELECT vote_type FROM votes WHERE user_id = " + user_id + 
                    " AND post_id = " + post_id;
     
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
     
-    bool voted = false;
+    string vote_type = "";
     if (sqlite3_step(stmt) == SQLITE_ROW) {
-        int count = sqlite3_column_int(stmt, 0);
-        voted = (count > 0);
+        const unsigned char* result = sqlite3_column_text(stmt, 0);
+        if (result) {
+            vote_type = string((char*)result);
+        }
     }
     
     sqlite3_finalize(stmt);
     sqlite3_close(db);
     
-    return voted;
+    return vote_type;
 }
 
-//handles the upvoting functionality that counts the score up when clicked (claude generated)
-int handleUpvote(string post_id, string user_id) {
- //check if user already voted
-    if (hasUserVoted(user_id, post_id)) {
-        cout << "ERROR: Already voted" << endl;
-        return -1;
+// Remove a user's vote
+void removeVote(sqlite3* db, string user_id, string post_id, string old_vote_type) {
+    // Decrement the appropriate counter
+    string updateQuery;
+    if (old_vote_type == "upvote") {
+        updateQuery = "UPDATE posts SET upvotes = upvotes - 1 WHERE id = " + post_id;
+    } else {
+        updateQuery = "UPDATE posts SET downvotes = downvotes - 1 WHERE id = " + post_id;
     }
+    sqlite3_exec(db, updateQuery.c_str(), nullptr, nullptr, nullptr);
+    
+    // Delete the vote record
+    string deleteQuery = "DELETE FROM votes WHERE user_id = " + user_id + 
+                        " AND post_id = " + post_id;
+    sqlite3_exec(db, deleteQuery.c_str(), nullptr, nullptr, nullptr);
+}
+
+// Add a vote
+void addVote(sqlite3* db, string user_id, string post_id, string vote_type) {
+    // Increment the appropriate counter
+    string updateQuery;
+    if (vote_type == "upvote") {
+        updateQuery = "UPDATE posts SET upvotes = upvotes + 1 WHERE id = " + post_id;
+    } else {
+        updateQuery = "UPDATE posts SET downvotes = downvotes + 1 WHERE id = " + post_id;
+    }
+    sqlite3_exec(db, updateQuery.c_str(), nullptr, nullptr, nullptr);
+    
+    // Insert the vote record
+    string insertQuery = "INSERT INTO votes (user_id, post_id, vote_type) VALUES (" +
+                        user_id + ", " + post_id + ", '" + vote_type + "')";
+    sqlite3_exec(db, insertQuery.c_str(), nullptr, nullptr, nullptr);
+}
+
+// Handle upvote with toggle functionality
+void handleUpvote(string post_id, string user_id) {
+    string current_vote = getUserVote(user_id, post_id);
     
     sqlite3* db = connectDB();
-    if (db == nullptr) return -1;
-    
-    char* errMsg = nullptr;
-    
-    //start transaction
-    sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, &errMsg);
-    
-    //increment upvote count
-    string updateQuery = "UPDATE posts SET upvotes = upvotes + 1 WHERE id = " + post_id;
-    int rc = sqlite3_exec(db, updateQuery.c_str(), nullptr, nullptr, &errMsg);
-    
-    if (rc != SQLITE_OK) {
-        cerr << "UPDATE failed: " << errMsg << endl;
-        sqlite3_free(errMsg);
-        sqlite3_exec(db, "ROLLBACK", nullptr, nullptr, nullptr);
-        sqlite3_close(db);
-        return -1;
-    }
-    
-    //record the vote
-    string insertQuery = "INSERT INTO votes (user_id, post_id, vote_type) VALUES (" +
-                        user_id + ", " + post_id + ", 'upvote')";
-    rc = sqlite3_exec(db, insertQuery.c_str(), nullptr, nullptr, &errMsg);
-    
-    if (rc != SQLITE_OK) {
-        cerr << "INSERT failed: " << errMsg << endl;
-        sqlite3_free(errMsg);
-        sqlite3_exec(db, "ROLLBACK", nullptr, nullptr, nullptr);
-        sqlite3_close(db);
-        return -1;
-    }
-    
-    //commit transaction
-    sqlite3_exec(db, "COMMIT", nullptr, nullptr, nullptr);
-    
-    //get new upvote count
-    int newCount = getUpvoteCount(post_id);
-    cout << "SUCCESS: Post " << post_id << " now has " << newCount << " upvotes" << endl;
-    
-    sqlite3_close(db);
-    return newCount;
-}
-
-//handles the downvoting functionality that counts the score down when clicked (claude generated)
-int handleDownvote(string post_id, string user_id) {
-     //check if user already voted
-    if (hasUserVoted(user_id, post_id)) {
-        cout << "ERROR: Already voted" << endl;
-        return -1;
-    }
-    
-    sqlite3* db = connectDB();
-    if (db == nullptr) return -1;
-    
-    char* errMsg = nullptr;
-    
-    sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, &errMsg);
-    
-    //increment downvote count
-    string updateQuery = "UPDATE posts SET downvotes = downvotes + 1 WHERE id = " + post_id;
-    sqlite3_exec(db, updateQuery.c_str(), nullptr, nullptr, &errMsg);
-    
-    //record the vote
-    string insertQuery = "INSERT INTO votes (user_id, post_id, vote_type) VALUES (" +
-                        user_id + ", " + post_id + ", 'downvote')";
-    sqlite3_exec(db, insertQuery.c_str(), nullptr, nullptr, &errMsg);
-    
-    sqlite3_exec(db, "COMMIT", nullptr, nullptr, nullptr);
-    
-    int newCount = getDownvoteCount(post_id);
-    cout << "SUCCESS: Post " << post_id << " now has " << newCount << " downvotes" << endl;
-    
-    sqlite3_close(db);
-    return newCount;
-}
-
-//handles the comment count and its functionality I think (claude generated)
-void handleComment(string post_id, string user_id, string text) {
-     sqlite3* db = connectDB();
     if (db == nullptr) return;
     
-    //escape single quotes to prevent SQL errors
+    sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, nullptr);
+    
+    if (current_vote == "upvote") {
+        // Already upvoted - remove the upvote (toggle off)
+        removeVote(db, user_id, post_id, "upvote");
+        cout << "SUCCESS: Upvote removed from post " << post_id << endl;
+    }
+    else if (current_vote == "downvote") {
+        // Currently downvoted - switch to upvote
+        removeVote(db, user_id, post_id, "downvote");
+        addVote(db, user_id, post_id, "upvote");
+        cout << "SUCCESS: Changed to upvote on post " << post_id << endl;
+    }
+    else {
+        // No vote yet - add upvote
+        addVote(db, user_id, post_id, "upvote");
+        cout << "SUCCESS: Upvoted post " << post_id << endl;
+    }
+    
+    sqlite3_exec(db, "COMMIT", nullptr, nullptr, nullptr);
+    sqlite3_close(db);
+}
+
+// Handle downvote with toggle functionality
+void handleDownvote(string post_id, string user_id) {
+    string current_vote = getUserVote(user_id, post_id);
+    
+    sqlite3* db = connectDB();
+    if (db == nullptr) return;
+    
+    sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, nullptr);
+    
+    if (current_vote == "downvote") {
+        // Already downvoted - remove the downvote (toggle off)
+        removeVote(db, user_id, post_id, "downvote");
+        cout << "SUCCESS: Downvote removed from post " << post_id << endl;
+    }
+    else if (current_vote == "upvote") {
+        // Currently upvoted - switch to downvote
+        removeVote(db, user_id, post_id, "upvote");
+        addVote(db, user_id, post_id, "downvote");
+        cout << "SUCCESS: Changed to downvote on post " << post_id << endl;
+    }
+    else {
+        // No vote yet - add downvote
+        addVote(db, user_id, post_id, "downvote");
+        cout << "SUCCESS: Downvoted post " << post_id << endl;
+    }
+    
+    sqlite3_exec(db, "COMMIT", nullptr, nullptr, nullptr);
+    sqlite3_close(db);
+}
+
+// Handle adding a comment
+void handleComment(string post_id, string user_id, string text) {
+    sqlite3* db = connectDB();
+    if (db == nullptr) return;
+    
+    // Escape single quotes to prevent SQL errors
     string escaped_text = text;
     size_t pos = 0;
     while ((pos = escaped_text.find("'", pos)) != string::npos) {
@@ -212,23 +159,15 @@ void handleComment(string post_id, string user_id, string text) {
         cerr << "ERROR: " << errMsg << endl;
         sqlite3_free(errMsg);
     } else {
-        int commentCount = getCommentCount(post_id);
-        cout << "SUCCESS: Comment added. Post " << post_id << " now has " << commentCount << " comments" << endl;
+        cout << "SUCCESS: Comment added to post " << post_id << endl;
     }
     
     sqlite3_close(db);
 }
 
-//handles functionalities of a forum website
-int main (int argc, char* argv[]) {
-
-    // argv[0] = "./forum_backend" (program name)
-    // argv[1] = "upvote" or "downvote" or "comment"
-    // argv[2] = post_id
-    // argv[3] = user_id
-    // argv[4] = comment_text (if commenting)
-
-   if (argc < 4) {
+// Main function
+int main(int argc, char* argv[]) {
+    if (argc < 4) {
         cerr << "Usage: ./forum_backend <action> <post_id> <user_id> [text]" << endl;
         return 1;
     }
@@ -257,4 +196,3 @@ int main (int argc, char* argv[]) {
         
     return 0;
 }
-

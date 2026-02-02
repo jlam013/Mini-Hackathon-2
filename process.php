@@ -1,6 +1,6 @@
 <?php
 // process.php - Handles upvote/downvote/comment actions
-
+//ai generated
 // Enable error display for debugging
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

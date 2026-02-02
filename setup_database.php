@@ -1,4 +1,5 @@
 <?php
+//ai generated
 // setup_database.php - Run this ONCE to create your database
 
 try {
