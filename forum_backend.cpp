@@ -3,8 +3,8 @@
 #include <sqlite3.h>
 
 using namespace std;
-//ai generated
-// Database connection function
+//half ai generated
+//database connection function
 sqlite3* connectDB() {
     sqlite3* db;
     int rc = sqlite3_open("forum.db", &db);
@@ -17,7 +17,7 @@ sqlite3* connectDB() {
     return db;
 }
 
-// Get user's current vote on a post (returns "upvote", "downvote", or "" if no vote)
+//get user's current vote on a post (returns "upvote", "downvote", or "" if no vote)
 string getUserVote(string user_id, string post_id) {
     sqlite3* db = connectDB();
     if (db == nullptr) return "";
@@ -42,9 +42,9 @@ string getUserVote(string user_id, string post_id) {
     return vote_type;
 }
 
-// Remove a user's vote
+//remove a user's vote
 void removeVote(sqlite3* db, string user_id, string post_id, string old_vote_type) {
-    // Decrement the appropriate counter
+    //decrement the appropriate counter
     string updateQuery;
     if (old_vote_type == "upvote") {
         updateQuery = "UPDATE posts SET upvotes = upvotes - 1 WHERE id = " + post_id;
@@ -53,15 +53,15 @@ void removeVote(sqlite3* db, string user_id, string post_id, string old_vote_typ
     }
     sqlite3_exec(db, updateQuery.c_str(), nullptr, nullptr, nullptr);
     
-    // Delete the vote record
+    //delete the vote record
     string deleteQuery = "DELETE FROM votes WHERE user_id = " + user_id + 
                         " AND post_id = " + post_id;
     sqlite3_exec(db, deleteQuery.c_str(), nullptr, nullptr, nullptr);
 }
 
-// Add a vote
+//add a vote
 void addVote(sqlite3* db, string user_id, string post_id, string vote_type) {
-    // Increment the appropriate counter
+    //increment the appropriate counter
     string updateQuery;
     if (vote_type == "upvote") {
         updateQuery = "UPDATE posts SET upvotes = upvotes + 1 WHERE id = " + post_id;
@@ -70,13 +70,13 @@ void addVote(sqlite3* db, string user_id, string post_id, string vote_type) {
     }
     sqlite3_exec(db, updateQuery.c_str(), nullptr, nullptr, nullptr);
     
-    // Insert the vote record
+    //insert the vote record
     string insertQuery = "INSERT INTO votes (user_id, post_id, vote_type) VALUES (" +
                         user_id + ", " + post_id + ", '" + vote_type + "')";
     sqlite3_exec(db, insertQuery.c_str(), nullptr, nullptr, nullptr);
 }
 
-// Handle upvote with toggle functionality
+//handle upvote with toggle functionality
 void handleUpvote(string post_id, string user_id) {
     string current_vote = getUserVote(user_id, post_id);
     
@@ -86,18 +86,18 @@ void handleUpvote(string post_id, string user_id) {
     sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, nullptr);
     
     if (current_vote == "upvote") {
-        // Already upvoted - remove the upvote (toggle off)
+        //already upvoted - remove the upvote (toggle off)
         removeVote(db, user_id, post_id, "upvote");
         cout << "SUCCESS: Upvote removed from post " << post_id << endl;
     }
     else if (current_vote == "downvote") {
-        // Currently downvoted - switch to upvote
+        //currently downvoted - switch to upvote
         removeVote(db, user_id, post_id, "downvote");
         addVote(db, user_id, post_id, "upvote");
         cout << "SUCCESS: Changed to upvote on post " << post_id << endl;
     }
     else {
-        // No vote yet - add upvote
+        //no vote yet - add upvote
         addVote(db, user_id, post_id, "upvote");
         cout << "SUCCESS: Upvoted post " << post_id << endl;
     }
@@ -106,7 +106,7 @@ void handleUpvote(string post_id, string user_id) {
     sqlite3_close(db);
 }
 
-// Handle downvote with toggle functionality
+//handle downvote with toggle functionality
 void handleDownvote(string post_id, string user_id) {
     string current_vote = getUserVote(user_id, post_id);
     
@@ -116,18 +116,18 @@ void handleDownvote(string post_id, string user_id) {
     sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, nullptr);
     
     if (current_vote == "downvote") {
-        // Already downvoted - remove the downvote (toggle off)
+        //already downvoted - remove the downvote (toggle off)
         removeVote(db, user_id, post_id, "downvote");
         cout << "SUCCESS: Downvote removed from post " << post_id << endl;
     }
     else if (current_vote == "upvote") {
-        // Currently upvoted - switch to downvote
+        //currently upvoted - switch to downvote
         removeVote(db, user_id, post_id, "upvote");
         addVote(db, user_id, post_id, "downvote");
         cout << "SUCCESS: Changed to downvote on post " << post_id << endl;
     }
     else {
-        // No vote yet - add downvote
+        //no vote yet - add downvote
         addVote(db, user_id, post_id, "downvote");
         cout << "SUCCESS: Downvoted post " << post_id << endl;
     }
@@ -136,12 +136,12 @@ void handleDownvote(string post_id, string user_id) {
     sqlite3_close(db);
 }
 
-// Handle adding a comment
+// handle adding a comment
 void handleComment(string post_id, string user_id, string text) {
     sqlite3* db = connectDB();
     if (db == nullptr) return;
     
-    // Escape single quotes to prevent SQL errors
+    //escape single quotes to prevent SQL errors
     string escaped_text = text;
     size_t pos = 0;
     while ((pos = escaped_text.find("'", pos)) != string::npos) {
@@ -165,7 +165,7 @@ void handleComment(string post_id, string user_id, string text) {
     sqlite3_close(db);
 }
 
-// Main function
+//main
 int main(int argc, char* argv[]) {
     if (argc < 4) {
         cerr << "Usage: ./forum_backend <action> <post_id> <user_id> [text]" << endl;
