@@ -1,33 +1,74 @@
+/* ===============================
+   Read URL Parameters
+================================ */
 const params = new URLSearchParams(window.location.search);
-const course = params.get("course");
+const courseParam = params.get("course");
 const type = params.get("type");
 
+/* ===============================
+   DOM Elements
+================================ */
 const title = document.getElementById("resourceTitle");
 const list = document.querySelector(".resource-list");
+const breadcrumb = document.getElementById("breadcrumb");
+const createBtn = document.getElementById("createPostBtn");
 
+/* ===============================
+   Helpers
+================================ */
 const typeNames = {
     notes: "Notes",
     exams: "Previous Exams & Assignments",
     practice: "Practice Questions"
 };
 
-if (course && type) {
-    title.innerText = `${course} — ${typeNames[type]}`;
+const normalizedCourse = courseParam
+    ? courseParam.toUpperCase().replace(/\s+/g, "")
+    : "";
+
+/* ===============================
+   Page Title
+================================ */
+if (courseParam && type) {
+    title.innerText = `${normalizedCourse} — ${typeNames[type]}`;
 }
 
-/* Load posts from localStorage */
+/* ===============================
+   Breadcrumb
+================================ */
+if (courseParam && type) {
+    breadcrumb.innerHTML = `
+        <a href="index.html">Home</a> →
+        <a href="course.html?course=${normalizedCourse}">
+            ${normalizedCourse}
+        </a> →
+        <span>${typeNames[type]}</span>
+    `;
+}
+
+/* ===============================
+   Create Post Button
+================================ */
+if (createBtn && courseParam && type) {
+    createBtn.href = `create-post.html?course=${normalizedCourse}&type=${type}`;
+}
+
+/* ===============================
+   Load Posts (localStorage)
+================================ */
 const posts = JSON.parse(localStorage.getItem("posts")) || [];
 
-/* Filter by course + type */
-const normalizedCourse = course.toUpperCase().replace(/\s+/g, "");
-
+/* ===============================
+   Filter Posts by Course + Type
+================================ */
 const filtered = posts.filter(p =>
     p.course.toUpperCase().replace(/\s+/g, "") === normalizedCourse &&
     p.type === type
 );
 
-
-/* Render */
+/* ===============================
+   Render Posts
+================================ */
 list.innerHTML = "";
 
 if (filtered.length === 0) {
@@ -41,8 +82,33 @@ if (filtered.length === 0) {
             <h3>${p.title}</h3>
             <p>${p.desc}</p>
             <span>📄 ${p.file}</span>
+
+            <div class="post-actions">
+                <button onclick="editPost(${p.id})">Edit</button>
+                <button onclick="deletePost(${p.id})">Delete</button>
+            </div>
         `;
 
         list.appendChild(item);
     });
+}
+
+/* ===============================
+   Delete Post
+================================ */
+function deletePost(id) {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+    posts = posts.filter(p => p.id !== id);
+
+    localStorage.setItem("posts", JSON.stringify(posts));
+    location.reload();
+}
+
+/* ===============================
+   Edit Post
+================================ */
+function editPost(id) {
+    window.location.href = `create-post.html?edit=${id}`;
 }

@@ -24,9 +24,17 @@
     <h2>Create a Post</h2>
 
     <div class="post-card post-form">
-        <input id="postTitle" type="text" placeholder="Post title">
+        <input
+            id="postTitle"
+            type="text"
+            placeholder="Post title"
+        >
 
-        <input id="postCourse" type="text" placeholder='Course (e.g. COMP2633)'>
+        <input
+            id="postCourse"
+            type="text"
+            placeholder="Course (e.g. COMP2633)"
+        >
 
         <select id="postType">
             <option value="notes">Notes</option>
@@ -34,20 +42,21 @@
             <option value="practice">Practice Questions</option>
         </select>
 
-        <textarea id="postDesc" rows="6" placeholder="Describe the resource"></textarea>
+        <textarea
+            id="postDesc"
+            rows="6"
+            placeholder="Describe the resource you are sharing"
+        ></textarea>
 
         <button onclick="savePost()">Post</button>
     </div>
-
-    <script src="create-post.js"></script>
-
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
         <p><strong>MRU CS Hub</strong> — A student-built project</p>
         <p>
-            📧 Contact: hye582@mtroyal.ca  
+            📧 Contact: hye582@mtroyal.ca/jlam013@mtroyal.ca  
             | 🐞 <a href="#">Report a bug</a>
         </p>
         <p class="footer-note">
@@ -55,6 +64,9 @@
         </p>
     </div>
 </footer>
+
+<!-- JS must be loaded AFTER the HTML -->
+<script src="create-post.js"></script>
 
 </body>
 </html>
