@@ -14,7 +14,7 @@ function searchCourse() {
         //go to their course dashboard and dont display error
         error.textContent = "";
         const course = input.replace(/\s+/g, "");
-        window.location.href = `"course.html?course=${course}`;
+        window.location.href = `course.html?course=${course}`;
 
     }
     else {
