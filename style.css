@@ -254,3 +254,10 @@ main {
     text-align: right;
     margin-bottom: 25px;
 }
+
+/* error message stuff */
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+}

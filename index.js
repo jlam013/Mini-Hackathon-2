@@ -1,6 +1,6 @@
 function searchCourse() {
     const input = document.getElementById("courseInput").value.trim();
-    const error = document.getELementById("errorMessage");
+    const error = document.getElementById("errorMessage");
     //list of valid courses
     const MRUcourses = ["COMP 1633", "COMP 1701", "COMP 2655", "COMP 2631", "COMP 2659",
                         "COMP 2633"];
@@ -19,6 +19,6 @@ function searchCourse() {
     }
     else {
         //display error
-        error.textcontent = "This is not a course at MRU.";
+        error.textContent = "This is not a course at MRU.";
     }
 }
