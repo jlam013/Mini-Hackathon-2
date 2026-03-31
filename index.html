@@ -26,13 +26,15 @@
 <main class="center">
     <h2>Welcome to MRU CS hub, find course resources here</h2>
 
-    <div class="search-row">
-        <input 
-            id="courseInput"
-            type="text"
-            placeholder='Enter course name e.g. "COMP 2633"'>
-        <button onclick="searchCourse()">Search</button>
-    </div>
+    <form onsubmit="searchCourse(); return false;">
+        <div class="search-row">
+            <input 
+                id="courseInput"
+                type="text"
+                placeholder='Enter course name e.g. "COMP 2633"'>
+            <button type="submit">Search</button>
+        </div>
+    </form>
 
     <!-- error message - Juin -->
      <div id="errorMessage" class="error-message"></div>
