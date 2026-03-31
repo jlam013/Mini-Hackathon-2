@@ -78,10 +78,21 @@ if (filtered.length === 0) {
         const item = document.createElement("div");
         item.className = "resource-item";
 
+        const isImage = p.fileType && p.fileType.startsWith("image/");
+
         item.innerHTML = `
             <h3>${p.title}</h3>
             <p>${p.desc}</p>
-            <span>📄 ${p.file}</span>
+            
+            ${
+                p.fileData
+                ? isImage
+                    ? `<img src="${p.fileData}" alt="${p.fileName}" class="post-image">`
+                    : `<a href="${p.fileData}" target="_blank" download="${p.fileName}">
+                        📄 ${p.fileName}
+                       </a>`
+                : `<span>📄 No file</span>`
+            }
 
             <div class="post-actions">
                 <button onclick="editPost(${p.id})">Edit</button>

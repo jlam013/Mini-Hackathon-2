@@ -38,7 +38,7 @@ function savePost() {
     const desc = document.getElementById("postDesc").value.trim();
 
     const fileInput = document.getElementById("postFile");
-    const selectedFile = fileInput.files[0];
+    const selectedFile = fileInput ? fileInput.files[0] : null;
 
     if (!title || !courseInput || !desc) {
         alert("Please fill in all fields");
@@ -50,23 +50,30 @@ function savePost() {
         .replace(/\s+/g, "");
 
     function finishSave(fileData = null, fileName = "", fileType = "") {    
+        
         if (editId) {
             const index = posts.findIndex(p => p.id == editId);
+            
             posts[index] = {
                 ...posts[index],
                 title,
                 course: normalizedCourse,
                 type,
-                desc
+                desc,
+                fileData: fileData ?? posts[index].fileData, 
+                fileName: fileName || posts[index].fileName, 
+                fileType: fileType || posts[index].fileType 
             };
-        } else {
+        } 
+        
+        else {
             posts.push({
                 id: Date.now(),
                 title,
                 course: normalizedCourse,
                 type,
                 desc,
-                file: "PDF"
+                fileName: selectedFile ? selectedFile.name : ""
             });
         }
     
@@ -75,5 +82,19 @@ function savePost() {
         window.location.href =
             `resources.html?course=${normalizedCourse}&type=${type}`;
     }
+    if (selectedFile) {
+        const reader = new FileReader();
+
+        reader.onload = function (event) { 
+            const fileData = event.target.result;
+            finishSave(fileData, selectedFile.name, selectedFile.type);
+        };
+
+        reader.readAsDataURL(selectedFile); 
+    }
+    else {
+        finishSave();
+    }    
+    
 
 }
