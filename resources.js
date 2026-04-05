@@ -26,6 +26,8 @@ const normalizedCourse = courseParam
     ? courseParam.toUpperCase().replace(/\s+/g, "")
     : "";
 
+const displayCourse = normalizedCourse.replace(/([A-Z]+)(\d+)/, "$1 $2");
+
 /* ===============================
    Page Title
 ================================ */
@@ -40,7 +42,7 @@ if (courseParam && type) {
     breadcrumb.innerHTML = `
         <a href="index.html">Home</a> →
         <a href="course.html?course=${normalizedCourse}">
-            ${normalizedCourse}
+            ${displayCourse}
         </a> →
         <span>${typeNames[type]}</span>
     `;
