@@ -88,10 +88,28 @@ if (filtered.length === 0) {
             <div class="post-actions">
                 <button onclick="editPost(${p.id})">Edit</button>
                 <button onclick="deletePost(${p.id})">Delete</button>
+                <button onclick="commentPost(${p.id})">Comment</button>
             </div>
+
+            <div class="comments" id="comments-${p.id}"></div>
         `;
 
         list.appendChild(item);
+
+        // Render comments
+        if (p.comments && p.comments.length > 0) {
+            const commentBox = item.querySelector(`#comments-${p.id}`);
+
+            p.comments.forEach(c => {
+                const cEl = document.createElement("p");
+
+                const date = new Date(c.time);
+                const formatted = date.toLocaleString();
+                
+                cEl.innerText = "💬 " + c.text;
+                commentBox.appendChild(cEl);
+            });
+        }
     });
 }
 
@@ -113,4 +131,29 @@ function deletePost(id) {
 ================================ */
 function editPost(id) {
     window.location.href = `create-post.html?edit=${id}`;
+}
+
+/* ===============================
+   Comment Post
+================================ */
+function commentPost(id) {
+    const text = prompt("Enter your comment:");
+    if (!text) return;
+
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+
+    if (!post.comments) {
+        post.comments = [];
+    }
+
+    post.comments.push({
+        text,
+        time: new Date().toISOString()
+    });
+
+    localStorage.setItem("posts",JSON.stringify(posts));
+    location.reload();
 }
