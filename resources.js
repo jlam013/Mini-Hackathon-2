@@ -12,6 +12,9 @@ const title = document.getElementById("resourceTitle");
 const list = document.querySelector(".resource-list");
 const breadcrumb = document.getElementById("breadcrumb");
 const createBtn = document.getElementById("createPostBtn");
+const keywordSearch = document.getElementById("keywordSearch");
+const clearSearchBtn = document.getElementById("clearSearchBtn");
+const resultSummary = document.getElementById("resultSummary");
 
 /* ===============================
    Helpers
@@ -22,64 +25,105 @@ const typeNames = {
     practice: "Practice Questions"
 };
 
-const normalizedCourse = courseParam
-    ? courseParam.toUpperCase().replace(/\s+/g, "")
-    : "";
+function normalizeCourse(value = "") {
+    return value.toUpperCase().replace(/\s+/g, "").trim();
+}
 
-const displayCourse = normalizedCourse.replace(/([A-Z]+)(\d+)/, "$1 $2");
+function normalizeSearchText(value = "") {
+    return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function formatDate(dateValue) {
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+        return "Unknown time";
+    }
+
+    return date.toLocaleString([], {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+}
+
+function buildSearchTarget(post) {
+    return normalizeSearchText(`${post.title || ""} ${post.desc || ""}`);
+}
 
 /* ===============================
-   Page Title
+   Page Setup
 ================================ */
+const normalizedCourse = normalizeCourse(courseParam || "");
+
 if (courseParam && type) {
     title.innerText = `${normalizedCourse} — ${typeNames[type]}`;
-}
-
-/* ===============================
-   Breadcrumb
-================================ */
-if (courseParam && type) {
     breadcrumb.innerHTML = `
         <a href="index.html">Home</a> →
-        <a href="course.html?course=${normalizedCourse}">
-            ${displayCourse}
-        </a> →
+        <a href="course.html?course=${normalizedCourse}">${normalizedCourse}</a> →
         <span>${typeNames[type]}</span>
     `;
-}
-
-/* ===============================
-   Create Post Button
-================================ */
-if (createBtn && courseParam && type) {
     createBtn.href = `create-post.html?course=${normalizedCourse}&type=${type}`;
 }
 
 /* ===============================
-   Load Posts (localStorage)
+   Load + Filter Posts
 ================================ */
-const posts = JSON.parse(localStorage.getItem("posts")) || [];
+function getPosts() {
+    return JSON.parse(localStorage.getItem("posts")) || [];
+}
 
-/* ===============================
-   Filter Posts by Course + Type
-================================ */
-const filtered = posts.filter(p =>
-    p.course.toUpperCase().replace(/\s+/g, "") === normalizedCourse &&
-    p.type === type
-);
+function getBasePosts() {
+    return getPosts()
+        .filter(post => normalizeCourse(post.course) === normalizedCourse && post.type === type)
+        .sort((a, b) => new Date(b.createdAt || b.id).getTime() - new Date(a.createdAt || a.id).getTime());
+}
+
+function getVisiblePosts() {
+    const keyword = normalizeSearchText(keywordSearch.value);
+    const basePosts = getBasePosts();
+
+    if (!keyword) {
+        return basePosts;
+    }
+
+    return basePosts.filter(post => buildSearchTarget(post).includes(keyword));
+}
 
 /* ===============================
    Render Posts
 ================================ */
-list.innerHTML = "";
+function renderPosts() {
+    const allPosts = getBasePosts();
+    const visiblePosts = getVisiblePosts();
+    const keyword = normalizeSearchText(keywordSearch.value);
 
-if (filtered.length === 0) {
-    list.innerHTML = "<p>No resources yet. Be the first to post!</p>";
-} else {
-    filtered.forEach(p => {
-        const item = document.createElement("div");
+    list.innerHTML = "";
+
+    if (keyword) {
+        resultSummary.textContent = `${visiblePosts.length} result(s) found for “${keywordSearch.value.trim()}”.`;
+    } else {
+        resultSummary.textContent = `${allPosts.length} resource(s) available.`;
+    }
+
+    if (visiblePosts.length === 0) {
+        const emptyState = document.createElement("div");
+        emptyState.className = "empty-state";
+        emptyState.innerHTML = keyword
+            ? `<h3>No matching resources</h3><p>Try a different keyword or clear the search.</p>`
+            : `<h3>No resources yet</h3><p>Be the first to create a post for this section.</p>`;
+        list.appendChild(emptyState);
+        return;
+    }
+
+    visiblePosts.forEach(post => {
+        const item = document.createElement("article");
         item.className = "resource-item";
 
+        const topRow = document.createElement("div");
+        topRow.className = "resource-item-top";
         const isImage = p.fileType && p.fileType.startsWith("image/");
 
         item.innerHTML = `
@@ -96,31 +140,54 @@ if (filtered.length === 0) {
                 : `<span>📄 No file</span>`
             }
 
-            <div class="post-actions">
-                <button onclick="editPost(${p.id})">Edit</button>
-                <button onclick="deletePost(${p.id})">Delete</button>
-                <button onclick="commentPost(${p.id})">Comment</button>
-            </div>
+        const textBlock = document.createElement("div");
+        textBlock.className = "resource-text";
 
-            <div class="comments" id="comments-${p.id}"></div>
-        `;
+        const heading = document.createElement("h3");
+        heading.textContent = post.title;
 
+        const description = document.createElement("p");
+        description.className = "resource-description";
+        description.textContent = post.desc;
+
+        const fileBadge = document.createElement("span");
+        fileBadge.className = "file-badge";
+        fileBadge.textContent = `📄 ${post.file || "Resource"}`;
+
+        const meta = document.createElement("p");
+        meta.className = "resource-meta";
+
+        const createdText = `Posted ${formatDate(post.createdAt || post.id)}`;
+        const wasEdited = post.updatedAt && post.createdAt && post.updatedAt !== post.createdAt;
+        meta.textContent = wasEdited
+            ? `${createdText} • Updated ${formatDate(post.updatedAt)}`
+            : createdText;
+
+        const actions = document.createElement("div");
+        actions.className = "post-actions";
+
+        const editButton = document.createElement("button");
+        editButton.className = "btn-secondary small-btn";
+        editButton.textContent = "Edit";
+        editButton.addEventListener("click", () => editPost(post.id));
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "btn-danger small-btn";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deletePost(post.id));
+
+        actions.appendChild(editButton);
+        actions.appendChild(deleteButton);
+
+        textBlock.appendChild(heading);
+        textBlock.appendChild(description);
+        topRow.appendChild(textBlock);
+        topRow.appendChild(fileBadge);
+
+        item.appendChild(topRow);
+        item.appendChild(meta);
+        item.appendChild(actions);
         list.appendChild(item);
-
-        // Render comments
-        if (p.comments && p.comments.length > 0) {
-            const commentBox = item.querySelector(`#comments-${p.id}`);
-
-            p.comments.forEach(c => {
-                const cEl = document.createElement("p");
-
-                const date = new Date(c.time);
-                const formatted = date.toLocaleString();
-                
-                cEl.innerText = "💬 " + c.text;
-                commentBox.appendChild(cEl);
-            });
-        }
     });
 }
 
@@ -128,13 +195,13 @@ if (filtered.length === 0) {
    Delete Post
 ================================ */
 function deletePost(id) {
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    if (!confirm("Are you sure you want to delete this post?")) {
+        return;
+    }
 
-    let posts = JSON.parse(localStorage.getItem("posts")) || [];
-    posts = posts.filter(p => p.id !== id);
-
+    const posts = getPosts().filter(post => post.id !== id);
     localStorage.setItem("posts", JSON.stringify(posts));
-    location.reload();
+    renderPosts();
 }
 
 /* ===============================
@@ -145,26 +212,13 @@ function editPost(id) {
 }
 
 /* ===============================
-   Comment Post
+   Events
 ================================ */
-function commentPost(id) {
-    const text = prompt("Enter your comment:");
-    if (!text) return;
+keywordSearch.addEventListener("input", renderPosts);
+clearSearchBtn.addEventListener("click", () => {
+    keywordSearch.value = "";
+    renderPosts();
+    keywordSearch.focus();
+});
 
-    let posts = JSON.parse(localStorage.getItem("posts")) || [];
-
-    const post = posts.find(p => p.id === id);
-    if (!post) return;
-
-    if (!post.comments) {
-        post.comments = [];
-    }
-
-    post.comments.push({
-        text,
-        time: new Date().toISOString()
-    });
-
-    localStorage.setItem("posts",JSON.stringify(posts));
-    location.reload();
-}
+renderPosts();

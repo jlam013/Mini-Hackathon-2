@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("mru-cs-hub-theme");
+            const systemPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", initialTheme);
+        })();
+    </script>
     <title>Course Resources | MRU CS Hub</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="theme.js"></script>
     <script type="module" src="course.js"></script> 
     <script type="module" src="ath-ui.js"></script> <!-- To import firebase for logging in -->
 </head>
@@ -11,11 +21,7 @@
 
 <header>
     <div class="header-left">
-        <a href="index.html" class ="logo"> <!--redirects you to the main page
-                                                and <a </a> makes it clickable - Juin-->
-             <h1>MRU CS Hub</h1>
-        </a> 
-        
+        <h1>MRU CS Hub</h1>
         <p class="subtitle">
             Share notes, exams, and examples with fellow MRU CS students
         </p>
@@ -28,34 +34,34 @@
 </header>
 
 <main class="course-page">
-    <h2 id="courseTitle" class="course-title">
-        Course
-    </h2>
+    <nav class="breadcrumb" id="breadcrumb"></nav>
+
+    <h2 id="courseTitle" class="course-title">Course</h2>
 
     <div class="course-cards">
-    <a class="course-card" data-type="notes">
-        <h3>📘 Notes</h3>
-        <p>Lecture notes, summaries, cheat sheets</p>
-    </a>
+        <a class="course-card" data-type="notes">
+            <h3>📘 Notes</h3>
+            <p>Lecture notes, summaries, cheat sheets</p>
+        </a>
 
-    <a class="course-card" data-type="exams">
-        <h3>📝 Previous Exams & Assignments</h3>
-        <p>Midterms, finals, past assignments</p>
-    </a>
+        <a class="course-card" data-type="exams">
+            <h3>📝 Previous Exams & Assignments</h3>
+            <p>Midterms, finals, past assignments</p>
+        </a>
 
-    <a class="course-card" data-type="practice">
-        <h3>🧠 Practice Questions</h3>
-        <p>Extra problems and examples</p>
-    </a>
-</div>
+        <a class="course-card" data-type="practice">
+            <h3>🧠 Practice Questions</h3>
+            <p>Extra problems and examples</p>
+        </a>
+    </div>
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
         <p><strong>MRU CS Hub</strong> — A student-built project</p>
         <p>
-             Contact: hye582/jlam013/drusu908/tomg18 & @mtroyal.ca
-            | <a href="#">Report a bug</a>
+            📧 Contact: hye582@mtroyal.ca/jlam013@mtroyal.ca
+            | 🐞 <a href="#">Report a bug</a>
         </p>
         <p class="footer-note">
             This platform is not officially affiliated with Mount Royal University.

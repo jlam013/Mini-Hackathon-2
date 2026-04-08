@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("mru-cs-hub-theme");
+            const systemPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", initialTheme);
+        })();
+    </script>
     <title>MRU CS Hub</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="index.js"></script>
+    <script type="module" src="theme.js"></script>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="index.js"></script>
     <script type="module" src="ath-ui.js"></script> <!-- To import firebase for logging in -->
 </head>
 <body>
 
 <header>
     <div class="header-left">
-        <a href="index.html" class="logo">
-            <h1>MRU CS Hub</h1>
-        </a>
+        <h1>MRU CS Hub</h1>
         <p class="subtitle">
             Share notes, exams, and examples with fellow MRU CS students
         </p>
@@ -27,30 +36,45 @@
 
 </header>
 
-<main class="center">
-    <h2>Welcome to MRU CS hub, find course resources here</h2>
+<main class="center home-page">
+    <section class="hero-card">
+        <p class="eyebrow">Student resource sharing</p>
+        <h2>Find course resources</h2>
+        <p class="hero-copy">
+            Search for any MRU computer science course page, then browse notes,
+            assignments, and practice resources shared by other students.
+        </p>
 
-    <form onsubmit="searchCourse(); return false;">
         <div class="search-row">
-            <input 
+            <input
                 id="courseInput"
                 type="text"
-                placeholder='Enter course name e.g. "COMP 2633"'>
-            <button type="submit">Search</button>
+                placeholder='Enter course name e.g. "COMP 2633"'
+                aria-label="Course name"
+            >
+            <button onclick="searchCourse()">Search</button>
         </div>
-    </form>
 
-    <!-- error message - Juin -->
-     <div id="errorMessage" class="error-message"></div>
+        <p id="errorMessage" class="form-message" aria-live="polite"></p>
+    </section>
 
+    <div class="post-card home-cta-card">
+        <h3>Have something to share?</h3>
+        <p>
+            Upload your notes or practice material to help other MRU CS students.
+        </p>
+        <a href="create-post.html" class="btn-primary">
+            Create a Post
+        </a>
+    </div>
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
         <p><strong>MRU CS Hub</strong> — A student-built project</p>
         <p>
-             Contact: hye582/jlam013/drusu908/tomg18 & @mtroyal.ca
-            |  <a href="#">Report a bug</a>
+            📧 Contact: hye582@mtroyal.ca/jlam013@mtroyal.ca
+            | 🐞 <a href="#">Report a bug</a>
         </p>
         <p class="footer-note">
             This platform is not officially affiliated with Mount Royal University.
