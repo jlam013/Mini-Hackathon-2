@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a Post | MRU CS Hub</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -9,9 +10,7 @@
 
 <header>
     <div class="header-left">
-        <a href="index.html" class="logo" >
-            <h1>MRU CS Hub</h1>
-        </a>
+        <h1>MRU CS Hub</h1>
         <p class="subtitle">
             Share notes, exams, and examples with fellow MRU CS students
         </p>
@@ -22,44 +21,65 @@
     </nav>
 </header>
 
-<main class="content">
-    <h2>Create a Post</h2>
+<main class="content form-page">
+    <nav class="breadcrumb form-breadcrumb">
+        <a href="index.html">Home</a> →
+        <span id="formBreadcrumbLabel">Create a Post</span>
+    </nav>
 
-    <div class="post-card post-form">
-        <input
-            id="postTitle"
-            type="text"
-            placeholder="Post title"
-        >
+    <section class="form-shell">
+        <div class="form-heading">
+            <p class="eyebrow">Share a resource</p>
+            <h2 id="formTitle">Create a Post</h2>
+            <p class="form-description">
+                Add a clear title, the course code, and a helpful description so other students can find it quickly.
+            </p>
+        </div>
 
-        <input
-            id="postCourse"
-            type="text"
-            placeholder="Course (e.g. COMP2633)"
-        >
+        <div class="post-card post-form">
+            <label for="postTitle">Post title</label>
+            <input
+                id="postTitle"
+                type="text"
+                placeholder="Example: COMP 2655 Midterm Review Notes"
+            >
 
-        <select id="postType">
-            <option value="notes">Notes</option>
-            <option value="exams">Previous Exams & Assignments</option>
-            <option value="practice">Practice Questions</option>
-        </select>
+            <label for="postCourse">Course</label>
+            <input
+                id="postCourse"
+                type="text"
+                placeholder="Course (e.g. COMP 2633)"
+            >
 
-        <textarea
-            id="postDesc"
-            rows="6"
-            placeholder="Describe the resource you are sharing"
-        ></textarea>
+            <label for="postType">Resource type</label>
+            <select id="postType">
+                <option value="notes">Notes</option>
+                <option value="exams">Previous Exams & Assignments</option>
+                <option value="practice">Practice Questions</option>
+            </select>
 
-        <button onclick="savePost()">Post</button>
-    </div>
+            <label for="postDesc">Description</label>
+            <textarea
+                id="postDesc"
+                rows="7"
+                placeholder="Describe the resource you are sharing"
+            ></textarea>
+
+            <p id="postFormMessage" class="form-message" aria-live="polite"></p>
+
+            <div class="form-button-row">
+                <button id="submitPostBtn" class="btn-primary" onclick="savePost()">Post</button>
+            </div>
+        </div>
+    </section>
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
         <p><strong>MRU CS Hub</strong> — A student-built project</p>
         <p>
-             Contact: hye582/jlam013/drusu908/tomg18 & @mtroyal.ca
-            |  <a href="#">Report a bug</a>
+            📧 Contact: hye582@mtroyal.ca/jlam013@mtroyal.ca
+            | 🐞 <a href="#">Report a bug</a>
         </p>
         <p class="footer-note">
             This platform is not officially affiliated with Mount Royal University.
@@ -67,7 +87,6 @@
     </div>
 </footer>
 
-<!-- JS must be loaded AFTER the HTML -->
 <script src="create-post.js"></script>
 
 </body>
