@@ -1,32 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        (function () {
-            const savedTheme = localStorage.getItem("mru-cs-hub-theme");
-            const systemPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-            const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
-            document.documentElement.setAttribute("data-theme", initialTheme);
-        })();
-    </script>
+    <meta charset="UTF-8">
     <title>Resources | MRU CS Hub</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="theme.js"></script>
     <script defer src="resources.js"></script>
 </head>
 <body>
 
 <header>
     <div class="header-left">
-        <h1>MRU CS Hub</h1>
+        <a href="index.html" class = "logo">
+            <h1>MRU CS Hub</h1>
+        </a>
+
         <p class="subtitle">
             Share notes, exams, and examples with fellow MRU CS students
         </p>
     </div>
-    <nav class="header-nav">
-        <button class="theme-toggle" type="button" data-theme-toggle></button>
+    <nav>
         <a href="#">Login</a>
         <a href="#" class="btn-outline">Sign Up</a>
     </nav>
@@ -35,42 +27,43 @@
 <main class="resource-page">
     <nav class="breadcrumb" id="breadcrumb"></nav>
 
-    <section class="page-header-block">
-        <div>
-            <p class="eyebrow">Course resources</p>
-            <h2 id="resourceTitle">Resources</h2>
+    <h2 id="resourceTitle">Resources</h2>
+
+    <div class="resource-actions">
+    <a id="createPostBtn" href="#" class="btn-primary">
+        + Create a Post
+    </a>
+</div>
+
+
+    <div class="resource-list">
+        <!-- Example static items -->
+        <div class="resource-item">
+            <h3>Midterm Review Notes</h3>
+            <p>Includes linked lists and recursion examples</p>
+            <span>📄 PDF</span>
         </div>
 
-        <div class="resource-actions">
-            <a id="createPostBtn" href="#" class="btn-primary">
-                + Create a Post
-            </a>
+        <div class="resource-item">
+            <h3>Final Exam Practice</h3>
+            <p>Problems similar to past finals</p>
+            <span>📄 PDF</span>
         </div>
-    </section>
 
-    <section class="resource-toolbar">
-        <div class="resource-search-box">
-            <input
-                id="keywordSearch"
-                type="text"
-                placeholder="Search by keyword in title or description"
-                aria-label="Search resources by keyword"
-            >
+        <div class="resource-item">
+            <h3>Assignment 2 Walkthrough</h3>
+            <p>Detailed explanation of trees</p>
+            <span>📝 DOC</span>
         </div>
-        <button id="clearSearchBtn" class="btn-secondary" type="button">Clear</button>
-    </section>
-
-    <p id="resultSummary" class="result-summary"></p>
-
-    <div class="resource-list"></div>
+    </div>
 </main>
 
 <footer class="site-footer">
     <div class="footer-content">
         <p><strong>MRU CS Hub</strong> — A student-built project</p>
         <p>
-            📧 Contact: hye582@mtroyal.ca/jlam013@mtroyal.ca
-            | 🐞 <a href="#">Report a bug</a>
+             Contact: hye582/jlam013/drusu908/tomg18 & @mtroyal.ca
+            |  <a href="#">Report a bug</a>
         </p>
         <p class="footer-note">
             This platform is not officially affiliated with Mount Royal University.
