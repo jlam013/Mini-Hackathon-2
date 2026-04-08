@@ -5,6 +5,7 @@
     <title>MRU CS Hub</title>
     <link rel="stylesheet" href="style.css">
     <script defer src="index.js"></script>
+    <script type="module" src="ath-ui.js"></script> <!-- To import firebase for logging in -->
 </head>
 <body>
 
@@ -17,10 +18,13 @@
             Share notes, exams, and examples with fellow MRU CS students
         </p>
     </div>
+
     <nav>
-        <a href="#">Login</a>
-        <a href="#" class="btn-outline">Sign Up</a>
+        <span id="userDisplay"></span>
+        <logbuttn id="loginBtn"> <h2>Login</h2></logbuttn>
+        <logbuttn id="logoutBtn" style="display:none;"><h2>Logout</h2></logbuttn>
     </nav>
+
 </header>
 
 <main class="center">

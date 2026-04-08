@@ -4,11 +4,15 @@ import { initializeApp } from
 import { 
   getAuth, 
   onAuthStateChanged,
-  signOut
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 
-"https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+"https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-// Your Firebase config
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDLoZ6uEzkvx2UGvUZdZqFoClnZqnE6dH0",
     authDomain: "mru-cs-hub.firebaseapp.com",
@@ -20,6 +24,14 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-// Export auth
-export { auth, onAuthStateChanged, signOut };
+export { 
+  auth, 
+  provider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged, 
+  signOut 
+};
