@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Course Resources | MRU CS Hub</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="course.js"></script>
+    <script type="module" src="course.js"></script> 
+    <script type="module" src="ath-ui.js"></script> <!-- To import firebase for logging in -->
 </head>
 <body>
 
@@ -20,8 +21,9 @@
         </p>
     </div>
     <nav>
-        <a href="#">Login</a>
-        <a href="#" class="btn-outline">Sign Up</a>
+        <span id="userDisplay"></span>
+        <logbuttn id="loginBtn"> <h2>Login</h2></logbuttn>
+        <logbuttn id="logoutBtn" style="display:none;"><h2>Logout</h2></logbuttn>
     </nav>
 </header>
 
