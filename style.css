@@ -126,6 +126,20 @@ header a {
     transform: translateY(-1px);
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.4);
+nav logbuttn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+nav logbuttn:hover {
+    color: #4CAF50;
+}
+
+/* Main layout */
+main {
+    flex: 1;
 }
 
 .center {
@@ -234,6 +248,15 @@ header a {
 }
 
 .search-row button,
+.post-image {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+/* Buttons */
 .btn-primary {
     background: var(--primary);
     color: var(--primary-text);

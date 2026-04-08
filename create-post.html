@@ -24,10 +24,11 @@
             Share notes, exams, and examples with fellow MRU CS students
         </p>
     </div>
-    <nav class="header-nav">
-        <button class="theme-toggle" type="button" data-theme-toggle></button>
-        <a href="#">Login</a>
-        <a href="#" class="btn-outline">Sign Up</a>
+
+    <nav>
+        <span id="userDisplay"></span>
+        <logbuttn id="loginBtn"> <h2>Login</h2></logbuttn>
+        <logbuttn id="logoutBtn" style="display:none;"><h2>Logout</h2></logbuttn>
     </nav>
 </header>
 
@@ -37,14 +38,18 @@
         <span id="formBreadcrumbLabel">Create a Post</span>
     </nav>
 
-    <section class="form-shell">
-        <div class="form-heading">
-            <p class="eyebrow">Share a resource</p>
-            <h2 id="formTitle">Create a Post</h2>
-            <p class="form-description">
-                Add a clear title, the course code, and a helpful description so other students can find it quickly.
-            </p>
-        </div>
+    <div class="post-card post-form">
+        <input 
+            id="postFile" 
+            type="file" 
+            accept=".pdf,.doc,.docx,.png,.jpg"
+        >
+        
+        <input
+            id="postTitle"
+            type="text"
+            placeholder="Post title"
+        >
 
         <div class="post-card post-form">
             <label for="postTitle">Post title</label>

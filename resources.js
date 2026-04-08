@@ -124,6 +124,21 @@ function renderPosts() {
 
         const topRow = document.createElement("div");
         topRow.className = "resource-item-top";
+        const isImage = p.fileType && p.fileType.startsWith("image/");
+
+        item.innerHTML = `
+            <h3>${p.title}</h3>
+            <p>${p.desc}</p>
+            
+            ${
+                p.fileData
+                ? isImage
+                    ? `<img src="${p.fileData}" alt="${p.fileName}" class="post-image">`
+                    : `<a href="${p.fileData}" target="_blank" download="${p.fileName}">
+                        📄 ${p.fileName}
+                       </a>`
+                : `<span>📄 No file</span>`
+            }
 
         const textBlock = document.createElement("div");
         textBlock.className = "resource-text";
