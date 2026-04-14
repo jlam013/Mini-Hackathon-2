@@ -8,22 +8,15 @@ const cards = document.querySelectorAll(".course-card");
 if (course) {
     const normalizedCourse = course.toUpperCase().replace(/\s+/g, "");
 
-    if (title) {
-        title.innerText = `${normalizedCourse} — Course Resources`;
-    }
+    title.innerText = `${normalizedCourse} — Course Resources`;
 
-    if (breadcrumb) {
-        breadcrumb.innerHTML =
-            `<a href="index.html">Home</a> → ` +
-            `<span>${normalizedCourse}</span>`;
-    }
+    breadcrumb.innerHTML = `
+        <a href="index.html">Home</a> →
+        <span>${normalizedCourse}</span>
+    `;
 
     cards.forEach(card => {
         const type = card.dataset.type;
-
-        if (type) {
-            const link = `resources.html?course=${normalizedCourse}&type=${type}`;
-            card.href = link;
-        }
+        card.href = `resources.html?course=${normalizedCourse}&type=${type}`;
     });
 }
