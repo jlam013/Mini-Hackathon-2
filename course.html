@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("mru-cs-hub-theme");
+            const systemPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", initialTheme);
+        })();
+    </script>
+    <title>Course Resources | MRU CS Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="theme.js"></script>
+    <script defer src="course.js"></script>
+    <script type="module" src="ath-ui.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <a href="index.html" class="logo">
+            <h1>MRU CS Hub</h1>
+        </a>
+
+        <p class="subtitle">
+            Share notes, exams, and examples with fellow MRU CS students
+        </p>
+    </div>
+
+    <nav class="header-nav">
+        <span id="userDisplay"></span>
+        <button class="theme-toggle" type="button" data-theme-toggle></button>
+        <button id="loginBtn" type="button">Login</button>
+        <button id="logoutBtn" type="button" style="display:none;">Logout</button>
+        <a href="#" class="btn-outline">Sign Up</a>
+    </nav>
+</header>
+
+<main class="course-page">
+    <nav class="breadcrumb" id="breadcrumb"></nav>
+
+    <h2 id="courseTitle" class="course-title">Course</h2>
+
+    <div class="course-cards">
+        <a class="course-card" data-type="notes">
+            <h3>📘 Notes</h3>
+            <p>Lecture notes, summaries, cheat sheets</p>
+        </a>
+
+        <a class="course-card" data-type="exams">
+            <h3>📝 Previous Exams & Assignments</h3>
+            <p>Midterms, finals, past assignments</p>
+        </a>
+
+        <a class="course-card" data-type="practice">
+            <h3>🧠 Practice Questions</h3>
+            <p>Extra problems and examples</p>
+        </a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-content">
+        <p><strong>MRU CS Hub</strong> — A student-built project</p>
+        <p>
+            📧 Contact: hye582/jlam013/tgoch984/drusu908 @mtroyal.ca
+            | 🐞 <a href="#">Report a bug</a>
+        </p>
+        <p class="footer-note">
+            This platform is not officially affiliated with Mount Royal University.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
