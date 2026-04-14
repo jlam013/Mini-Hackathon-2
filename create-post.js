@@ -17,10 +17,20 @@ const formMessage = document.getElementById("postFormMessage");
 const formTitle = document.getElementById("formTitle");
 const formBreadcrumbLabel = document.getElementById("formBreadcrumbLabel");
 const submitPostBtn = document.getElementById("submitPostBtn");
-
+const fileInput = document.getElementById("postFile");
 /* ===============================
    Helpers
 ================================ */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
 function cleanSingleLine(value) {
     return value.replace(/\s+/g, " ").trim();
 }
@@ -75,7 +85,7 @@ if (editId) {
 /* ===============================
    Save Post (Create or Edit)
 ================================ */
-function savePost() {
+async function savePost() {
     const title = cleanSingleLine(titleInput.value);
     const courseInput = cleanSingleLine(courseInputField.value);
     const type = typeInput.value;
@@ -91,6 +101,21 @@ function savePost() {
     const normalizedCourse = normalizeCourse(courseInput);
     const timestamp = new Date().toISOString();
 
+    const file = fileInput.files[0];
+    let fileData = null;
+    let fileName = null;
+
+    if (file) {
+        try {
+            fileData = await fileToBase64(file);
+            fileName = file.name;
+        } catch (error) {
+            showMessage("There was a problem reading the file.");
+            console.error(error);
+            return;
+        }
+    }
+
     if (editId) {
         const index = posts.findIndex(p => String(p.id) === String(editId));
 
@@ -105,6 +130,8 @@ function savePost() {
             course: normalizedCourse,
             type,
             desc,
+            fileName: fileName || posts[index].fileName,
+            fileData: fileData || posts[index].fileData,
             updatedAt: timestamp,
             createdAt: posts[index].createdAt || timestamp
         };
@@ -115,7 +142,8 @@ function savePost() {
             course: normalizedCourse,
             type,
             desc,
-            file: "PDF",
+            fileName,
+            fileData,
             createdAt: timestamp,
             updatedAt: timestamp
         });

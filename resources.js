@@ -137,7 +137,9 @@ function renderPosts() {
 
         const fileBadge = document.createElement("span");
         fileBadge.className = "file-badge";
-        fileBadge.textContent = `📄 ${post.file || "Resource"}`;
+        fileBadge.textContent = post.fileName 
+            ? `📄 ${post.fileName}` 
+            : "📄 Resource";
 
         const meta = document.createElement("p");
         meta.className = "resource-meta";
@@ -189,6 +191,15 @@ function renderPosts() {
         item.appendChild(topRow);
         item.appendChild(meta);
         item.appendChild(actions);
+        if (post.fileData) {
+            const fileLink = document.createElement("a");
+            fileLink.href = post.fileData;
+            fileLink.download = post.fileName;
+            fileLink.textContent = `📎 ${post.fileName || "Download File"}`;
+            fileLink.className = "file-download-link";
+
+            item.appendChild(fileLink);
+        }
 /* comment section */
 const commentSection = document.createElement("div");
 commentSection.className = "comment-section";
