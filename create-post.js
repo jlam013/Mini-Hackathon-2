@@ -124,3 +124,4 @@ function savePost() {
     localStorage.setItem("posts", JSON.stringify(posts));
     window.location.href = `resources.html?course=${normalizedCourse}&type=${type}`;
 }
+

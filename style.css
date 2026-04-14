@@ -558,3 +558,40 @@ main {
         align-self: flex-start;
     }
 }
+
+/* comment thread */
+.comment-section {
+    margin-top: 10px;
+    padding-left: 15px;
+    border-left: 2px solid #ddd;
+}
+
+.comment {
+    margin-bottom: 8px;
+}
+
+.comment-text {
+    margin: 0;
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: gray;
+}
+
+.comment-like.liked {
+    color: blue;
+    font-weight: bold;
+}
+
+.comment.reply {
+    margin-left: 2rem;
+    border-left: 3px solid var(--border-color, #444);
+    padding-left: 0.75rem;
+}
+
+.comment.reply.nested {
+    margin-left: 4rem; 
+    border-left: 3px solid var(--border-color, #666);
+    padding-left: 0.75rem;
+}
